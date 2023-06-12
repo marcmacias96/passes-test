@@ -1,6 +1,7 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+```
+
+# Passes Frontend Take Home
 
 First, run the development server:
 
@@ -10,29 +11,69 @@ npm run dev
 yarn dev
 # or
 pnpm dev
+## Goal
+
+Our goal is to create a like button like so:
+
+![design](design.png)
+
+The functionality should be as follows:
+
+- When the button is loaded:
+  - If the user has not liked it then show an empty heart icon
+  - If the user has liked it then show the heart icon filled with red
+  - Display the current number of likes
+    - If the count is greater than `999` this amount should be represented in
+      thousands
+      - e.g. `1,459` likes should be displayed as `1.4K`
+- When the button is clicked:
+  - If the heart is empty (not liked) then fill the heart with red
+  - If the heart is filled (liked) then remove the red from the heart
+  - The count displayed next to the button is incremented/decremented
+
+**Please create a fully functioning React application that supports these
+  features. Typescript is required.**
+
+## Backend
+
+To facilitate this functionality, we have the following backend APIs:
+
+- `GET /api/v1/like/:likeId/count` - Returns the number of likes
+- `GET /api/v1/like/:likeId/user/:userId` - Returns a boolean indicating if the
+  user has liked the button
+- `POST /api/v1/like/add` - Adds a like
+- `POST /api/v1/like/remove` - Removes the like
+
+Both `POST` endpoints expect a request body with fields `likeId` and `userId`.
+
+For testing we have provided a simple server `server.js`. You can run it like so:
+
+```bash
+# in a terminal session
+node server.js
+
+# in another session (example usage)
+curl -X POST --data '{"likeId": "123", "userId": "aaron"}' localhost:3001/api/v1/like/add
+curl -X POST --data '{"likeId": "123", "userId": "lucy"}' localhost:3001/api/v1/like/add
+curl -X GET localhost:3001/api/v1/like/123/count
+{"data":2}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The server will seamlessly handles new likes and users. No need to "create" a
+like or user. Also, note that the storage is in memory, so if you spin down the
+server you will lose any existing data.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Additional Info
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+Other notes/requirements:
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+- Use the included `heart-icon.svg` as the heart
+- Do not add any dependencies other than `axios` (optional, `fetch` is fine)
+- For user and like IDs you can use arbitrary mock values. However, ensure that
+  a component takes these IDs as props and the top-level application passes the
+  mocked values to the component.
+- If time permits, ensure that if a user rapidly clicks the like button it only
+  results in one API call after they pause clicking for more than 300ms. The UI
+  should be updated optimistically regardless of whether or not the API call
+  has been made.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
