@@ -2,9 +2,14 @@ import { useState, useEffect, useCallback } from 'react';
 import styles from '../styles/Home.module.css';
 import apiClient from '@/utils/httpClient';
 
-const HeartButton = ({ likeId, userId }: { likeId: string; userId: string }) => {
-  const [liked, setLiked] = useState(false);
-  const [likeCount, setLikeCount] = useState(0);
+interface HeartButtonProps {
+  likeId: string;
+  userId: string;
+}
+
+const HeartButton = ({ likeId, userId }: HeartButtonProps) => {
+  const [liked, setLiked] = useState<boolean>(false);
+  const [likeCount, setLikeCount] = useState<number>(0);
 
   useEffect(() => {
     fetchLikeStatus();
