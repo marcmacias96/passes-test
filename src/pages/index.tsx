@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import styles from '../styles/Home.module.css';
 import apiClient from '@/utils/httpClient';
 
@@ -11,25 +11,25 @@ const HeartButton = ({ likeId, userId }: { likeId: string; userId: string }) => 
     fetchLikeCount();
   }, []);
 
-  const fetchLikeStatus = async () => {
+  const fetchLikeStatus = useCallback(async () => {
     try {
       const response = await apiClient.get(`/api/v1/like/${likeId}/user/${userId}`);
       setLiked(response.data.data);
     } catch (error) {
       console.error('Failed to fetch like status:', error);
     }
-  };
+  }, [likeId, userId]);
 
-  const fetchLikeCount = async () => {
+  const fetchLikeCount = useCallback(async () => {
     try {
       const response = await apiClient.get(`/api/v1/like/${likeId}/count`);
       setLikeCount(response.data.data);
     } catch (error) {
       console.error('Failed to fetch like count:', error);
     }
-  };
+  }, [likeId]);
 
-  const handleButtonClick = async () => {
+  const handleButtonClick = useCallback(async () => {
     try {
       if (liked) {
         await apiClient.post('/api/v1/like/remove', { likeId, userId });
@@ -42,14 +42,14 @@ const HeartButton = ({ likeId, userId }: { likeId: string; userId: string }) => 
     } catch (error) {
       console.error('Failed to update like:', error);
     }
-  };
+  }, [likeId, userId, liked]);
 
-  const formatLikeCount = (count: number) => {
+  const formatLikeCount = useCallback((count: number) => {
     if (count > 999) {
       return (count / 1000).toFixed(1) + 'K';
     }
     return count.toString();
-  };
+  }, []);
 
   return (
     <div className={styles.heartButtonContainer}>
